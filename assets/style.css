@@ -1,0 +1,111 @@
+:root{
+  --paper:#EDEFE8; --paper-2:#E0E4D9; --paper-3:#D3D9CC; --ink:#15201A; --ink-2:#4F5E55; --line:#C6CDC0;
+  --green:#1F5B3E; --apple:#7FB23A; --wine:#6E2B48;
+  --serif:"Fraunces","Iowan Old Style","Palatino Linotype",Georgia,serif;
+  --sans:"IBM Plex Sans","Helvetica Neue",Arial,sans-serif;
+}
+*{box-sizing:border-box}
+html{background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:17px;line-height:1.55;-webkit-text-size-adjust:100%}
+body{margin:0}
+a{color:var(--green);text-decoration:none}
+a:hover{text-decoration:underline;text-underline-offset:3px}
+:focus-visible{outline:3px solid var(--apple);outline-offset:3px}
+img{max-width:100%;height:auto;display:block}
+button{font:inherit;color:inherit}
+.wrap{max-width:1180px;margin:0 auto;padding:0 28px}
+@media(max-width:600px){.wrap{padding:0 18px}}
+
+/* Kopf */
+.top{border-bottom:1px solid var(--line)}
+.top .wrap{display:flex;align-items:baseline;gap:28px;padding:16px 28px;flex-wrap:wrap}
+@media(max-width:600px){.top .wrap{padding:14px 18px;gap:16px}}
+.brand{font-family:var(--serif);font-weight:700;font-size:1.35rem;letter-spacing:-.01em;color:var(--ink)}
+.brand:hover{text-decoration:none}
+.top nav{display:flex;gap:22px;margin-left:auto;font-size:.95rem}
+.top nav a[aria-current]{color:var(--ink);border-bottom:2px solid var(--apple)}
+
+/* Äpfel (Wertung 1–6, wie auf der alten Seite) */
+.apples{display:inline-flex;align-items:center;gap:3px;vertical-align:middle}
+.apples i{display:inline-block;width:13px;height:13px;border-radius:45% 45% 50% 50%;background:var(--apple);position:relative}
+.apples i::after{content:"";position:absolute;left:6px;top:-3px;width:2px;height:4px;background:var(--green);border-radius:1px}
+.apples i.half{background:linear-gradient(90deg,var(--apple) 50%,var(--paper-3) 50%)}
+.apples b{font-weight:500;font-size:.85rem;color:var(--ink-2);margin-left:6px}
+.apples.sm i{width:9px;height:9px}
+.apples.sm i::after{left:4px;top:-2px;height:3px}
+
+/* Startseite */
+.lead{padding:44px 0 22px;display:flex;gap:28px;align-items:flex-end;flex-wrap:wrap}
+.lead h1{font-family:var(--serif);font-weight:500;font-size:clamp(2.2rem,5.2vw,3.8rem);line-height:1.02;letter-spacing:-.025em;margin:0;max-width:16ch;flex:1 1 380px}
+.lead p{color:var(--ink-2);margin:0;max-width:46ch;flex:1 1 300px;font-size:1.05rem}
+.tools{background:var(--paper);padding:14px 0 12px;border-bottom:1px solid var(--line);margin-bottom:22px}
+@media(min-width:760px){.tools{position:sticky;top:0;z-index:5}}
+.tools .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.tools input{flex:1 1 280px;font:inherit;font-size:1.05rem;padding:11px 16px;border:1.5px solid var(--line);border-radius:8px;background:#fff;color:var(--ink);min-width:0}
+.tools input:focus{border-color:var(--green);outline:none;box-shadow:0 0 0 3px rgba(31,91,62,.15)}
+.tools .dice{padding:11px 16px;border:1.5px solid var(--green);border-radius:8px;background:var(--green);color:#fff;cursor:pointer;white-space:nowrap}
+.tools .dice:hover{background:#174730}
+.cats{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.cats button{padding:5px 12px;border:1px solid var(--line);border-radius:999px;background:transparent;cursor:pointer;font-size:.9rem;color:var(--ink)}
+.cats button:hover{background:var(--paper-2)}
+.cats button[aria-pressed=true]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.cats button.veg[aria-pressed=true]{background:var(--green);border-color:var(--green)}
+.cats .n{color:inherit;opacity:.55;margin-left:5px;font-size:.8rem}
+.count{color:var(--ink-2);font-size:.9rem;margin:0 0 16px}
+.count a{margin-left:10px}
+
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:26px 22px;margin:0 0 60px;padding:0;list-style:none}
+@media(max-width:600px){.grid{grid-template-columns:repeat(2,1fr);gap:20px 14px}}
+.card{display:block;color:var(--ink)}
+.card:hover{text-decoration:none}
+.card:hover .t{text-decoration:underline;text-underline-offset:3px}
+.card .ph{aspect-ratio:4/3;background:var(--paper-2);border-radius:5px;overflow:hidden;display:flex;align-items:center;justify-content:center}
+.card .ph img{width:100%;height:100%;object-fit:cover}
+.card .ph span{font-family:var(--serif);font-size:3.4rem;color:var(--paper-3);font-weight:600;line-height:1}
+.card .t{font-family:var(--serif);font-size:1.12rem;font-weight:500;line-height:1.25;margin:10px 0 4px;letter-spacing:-.01em}
+.card .m{font-size:.82rem;color:var(--ink-2);display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.card.hide{display:none}
+.empty{padding:40px 0 80px;color:var(--ink-2)}
+
+/* Rezeptseite */
+.back{display:inline-block;margin:26px 0 30px;font-size:.92rem}
+.rz{display:grid;grid-template-columns:minmax(0,1fr) 380px;gap:34px 60px;padding-bottom:50px}
+.rz.no-img{grid-template-columns:minmax(0,1fr)}
+@media(max-width:820px){.rz{grid-template-columns:minmax(0,1fr)}}
+.rz-head{grid-column:1/-1}
+.rz-head .k{font-size:.9rem;color:var(--ink-2);margin-bottom:8px}
+.rz-head .k a{color:var(--ink-2)}
+.rz-head h1{font-family:var(--serif);font-weight:500;font-size:clamp(2rem,5vw,3.4rem);line-height:1.05;letter-spacing:-.025em;margin:0 0 14px;max-width:22ch}
+.rz .txt{max-width:64ch;font-size:1.05rem}
+.rz .txt p{margin:0 0 1em}
+.rz .txt p:last-child{margin-bottom:0}
+.rz figure{margin:0;position:sticky;top:24px;align-self:start}
+@media(max-width:820px){.rz figure{position:static;order:-1;max-width:520px}}
+.rz figure img{border-radius:5px;width:100%}
+.rz figcaption{font-size:.8rem;color:var(--ink-2);margin-top:6px}
+
+.abend{border-top:1px solid var(--line);padding:30px 0 50px;max-width:64ch}
+.abend h2{font-family:var(--serif);font-weight:600;font-size:1.35rem;margin:0 0 6px;letter-spacing:-.015em}
+.abend .when{color:var(--ink-2);margin:0 0 18px}
+.abend dl{margin:0;display:grid;grid-template-columns:110px 1fr;gap:8px 18px}
+@media(max-width:480px){.abend dl{grid-template-columns:1fr;gap:2px 0}.abend dt{margin-top:8px}}
+.abend dt{color:var(--ink-2);font-size:.88rem;padding-top:2px}
+.abend dd{margin:0}
+.abend ul{margin:0;padding:0;list-style:none}
+.abend ul li{padding-left:14px;text-indent:-14px}
+.abend ul li::before{content:"";display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--wine);margin-right:6px;vertical-align:1px}
+.abend .more{display:flex;flex-wrap:wrap;gap:8px}
+.abend .more a{font-size:.9rem;padding:4px 11px;border:1px solid var(--line);border-radius:999px;color:var(--ink)}
+.abend .more a:hover{background:var(--paper-2);text-decoration:none}
+
+/* Getränke, Über */
+.hero{padding:52px 0 30px}
+.hero h1{font-family:var(--serif);font-weight:500;font-size:clamp(2.2rem,5.2vw,3.8rem);line-height:1.02;letter-spacing:-.025em;margin:0 0 16px;max-width:16ch}
+.hero p{font-size:1.1rem;max-width:60ch;color:var(--ink-2);margin:0}
+.idx ul{list-style:none;margin:0 0 60px;padding:0;columns:2;column-gap:40px}
+@media(max-width:640px){.idx ul{columns:1}}
+.idx li{break-inside:avoid;padding:6px 0;border-top:1px solid var(--line)}
+.idx li b{font-weight:500}
+.idx li .s{color:var(--ink-2);font-size:.85rem;display:block}
+.about{max-width:64ch;padding:0 0 60px;color:var(--ink-2)}
+.about p{margin:0 0 1em}
+footer{border-top:1px solid var(--line);padding:26px 0 44px;color:var(--ink-2);font-size:.88rem}
