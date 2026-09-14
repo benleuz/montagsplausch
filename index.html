@@ -100,8 +100,17 @@ h1,h2{margin:0;font-weight:700;letter-spacing:-.035em;line-height:1}
 .lead p{margin:0;flex:1 1 280px;max-width:42ch;color:var(--mute);font-size:15.5px;line-height:1.6;text-wrap:pretty}
 .grid{margin:0 0 30px;padding:0;list-style:none;display:grid;grid-template-columns:repeat(auto-fill,minmax(212px,1fr));gap:10px}
 @media(max-width:560px){.grid{grid-template-columns:repeat(2,1fr);gap:8px}}
-.tile{position:relative;aspect-ratio:1/1;border-radius:4px;overflow:hidden;background:var(--bg-2);display:block;color:var(--fg)}
-.tile:hover{outline:2px solid var(--acid);outline-offset:-2px;text-decoration:none;color:var(--fg)}
+.flip{perspective:1200px;display:block;color:var(--fg)}
+.flip:hover{text-decoration:none;color:var(--fg)}
+.tile{position:relative;aspect-ratio:1/1;border-radius:4px;overflow:hidden;background:var(--bg-2);display:block;color:var(--fg);transform:rotateY(0deg);backface-visibility:hidden;-webkit-backface-visibility:hidden}
+.flip .in{display:block;position:relative;aspect-ratio:1/1;transition:transform .55s cubic-bezier(.2,.7,.2,1);transform-style:preserve-3d}
+@media(hover:hover){.flip:hover .in{transform:rotateY(180deg)}}
+.flip .bk{position:absolute;inset:0;transform-style:preserve-3d;border-radius:4px;background:var(--bg-3);border:1px solid var(--line);transform:rotateY(180deg);backface-visibility:hidden;-webkit-backface-visibility:hidden;padding:14px 15px;display:flex;flex-direction:column;gap:8px;overflow:hidden}
+.flip .bk .bt{font-size:14.5px;font-weight:600;line-height:1.2;letter-spacing:-.01em}
+.flip .bk .bx{font-size:12.5px;line-height:1.45;color:var(--fg-3);flex:1;overflow:hidden;display:-webkit-box;-webkit-line-clamp:7;-webkit-box-orient:vertical}
+.flip .bk .bm{font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;color:var(--mute-2);display:flex;justify-content:space-between;gap:8px}
+.flip .bk .bm b{color:var(--acid);font-weight:500}
+@media(prefers-reduced-motion:reduce){.flip .in{transition:none}}
 .tile img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 .tile .nf{position:absolute;top:10px;right:10px;font-family:var(--mono);font-size:10.5px;color:var(--dim);letter-spacing:.1em}
 .tile .sh{position:absolute;inset:0;background:linear-gradient(180deg,rgba(18,20,15,0) 34%,rgba(18,20,15,.9) 100%)}
@@ -256,7 +265,9 @@ footer div{max-width:1500px;margin:0 auto;padding:22px 22px 40px;color:var(--mut
     var list=filtered();
     var cards=list.slice(0,st.limit).map(function(r){
       var img=r.bild?'<img src="assets/bilder/'+esc(r.bild)+'" alt="" loading="lazy">':'<span class="nf">ohne Foto</span>';
-      return '<li><a class="tile" href="#/rezept/'+esc(r.slug)+'">'+img+'<span class="sh"></span><span class="cap"><span class="t">'+esc(r.titel)+'</span><span class="m">'+pips(r.wertung)+'<span class="y">'+r._jahr+'</span></span></span></a></li>';
+      var e=EV[r.abend], ex=r.text.trim()?r.text.trim().replace(/\s+/g,' '):'Kein Text notiert.'; if(ex.length>240){ex=ex.slice(0,240); ex=ex.slice(0,ex.lastIndexOf(' '))+' …';}
+      var bk='<span class="bk"><span class="bt">'+esc(r.titel)+'</span><span class="bx">'+esc(ex)+'</span><span class="bm"><span>'+e.datum.split('-').reverse().join('.')+'</span><b>Abend öffnen →</b></span></span>';
+      return '<li><a class="flip" href="#/rezept/'+esc(r.slug)+'"><span class="in"><span class="tile">'+img+'<span class="sh"></span><span class="cap"><span class="t">'+esc(r.titel)+'</span><span class="m">'+pips(r.wertung)+'<span class="y">'+r._jahr+'</span></span></span></span>'+bk+'</span></a></li>';
     }).join('');
     var more=list.length>st.limit?'<button class="more" id="more" type="button">weitere '+Math.min(48,list.length-st.limit)+' von '+list.length+' laden</button>':'<div class="spacer"></div>';
     var empty=list.length?'':'<p class="empty">Nichts gefunden. Andere Schreibweise probieren oder die Filter zurücksetzen.</p>';
