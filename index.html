@@ -48,12 +48,24 @@ h1,h2{margin:0;font-weight:700;letter-spacing:-.035em;line-height:1}
 .dice:hover{background:var(--acid-2)}
 .filters{max-width:1500px;margin:0 auto;padding:0 22px 11px;display:flex;gap:14px;align-items:center;flex-wrap:wrap}
 .filters[hidden]{display:none}
-.filters{flex-direction:column;align-items:stretch;gap:6px;padding-top:12px}
+.filters{flex-direction:column;align-items:stretch;gap:6px;padding-top:10px}
+.ftop{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.ftop .tog{padding:6px 12px;border:1px solid var(--line);border-radius:999px;font-size:13px;color:var(--fg);display:inline-flex;gap:8px;align-items:center}
+.ftop .tog:hover{border-color:var(--acid)}
+.ftop .tog[aria-expanded=true]{border-color:var(--acid);color:var(--acid)}
+.ftop .tog .n{font-family:var(--mono);font-size:10.5px;color:var(--acid)}
+.ftop .tog svg{width:10px;height:10px;transition:transform .15s}
+.ftop .tog[aria-expanded=true] svg{transform:rotate(180deg)}
+.active{display:flex;gap:6px;flex-wrap:wrap}
+.active button{padding:5px 10px;border-radius:999px;font-size:12.5px;background:var(--acid);color:var(--bg);font-weight:600;border:1px solid var(--acid)}
+.active button::after{content:" ×";opacity:.6}
+.active button:hover{background:var(--acid-2)}
+.panel{display:flex;flex-direction:column;gap:6px;padding:6px 0 4px;border-top:1px solid var(--bg-3)}
+.panel[hidden]{display:none}
 .fgroup{display:grid;grid-template-columns:96px minmax(0,1fr);gap:6px;align-items:start}
 .fgroup .gl{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--mute-2);padding-top:9px}
 @media(max-width:600px){.fgroup{grid-template-columns:1fr;gap:2px}.fgroup .gl{padding-top:6px}}
-.frow{display:flex;gap:14px;align-items:center;flex-wrap:wrap;margin-top:4px}
-.frow .sorts{margin-left:auto}
+.ftop .sorts{margin-left:auto}
 .abendhead{padding:36px 0 22px;border-bottom:1px solid var(--line);margin-bottom:8px}
 .abendhead .kicker{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--acid)}
 .abendhead h1{font-size:clamp(26px,3.6vw,42px);margin:8px 0 14px;letter-spacing:-.03em;line-height:1.05}
@@ -171,8 +183,15 @@ footer div{max-width:1500px;margin:0 auto;padding:22px 22px 40px;color:var(--mut
     <button class="dice" id="dice" type="button">Zufall</button>
   </div></div>
   <div class="filters" id="filters" hidden>
-    <div id="chips"></div>
-    <div class="frow"><div class="chips" id="extra"></div><div class="sorts"><span id="count"></span><button data-s="wertung">Äpfel</button><button data-s="neu">zuletzt</button><button data-s="alpha">A–Z</button></div></div>
+    <div class="ftop">
+      <button class="tog" id="tog" type="button" aria-expanded="false" aria-controls="panel">Filter<span class="n" id="togn"></span><svg viewBox="0 0 10 10" aria-hidden="true"><path d="M1 3l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6"/></svg></button>
+      <div class="active" id="active"></div>
+      <div class="sorts"><span id="count"></span><button data-s="wertung">Äpfel</button><button data-s="neu">zuletzt</button><button data-s="alpha">A–Z</button></div>
+    </div>
+    <div class="panel" id="panel" hidden>
+      <div id="chips"></div>
+      <div class="chips" id="extra"></div>
+    </div>
   </div>
 </header>
 <main id="app"><p class="loading">Rezepte werden geladen …</p></main>
@@ -227,6 +246,10 @@ footer div{max-width:1500px;margin:0 auto;padding:22px 22px 40px;color:var(--mut
     }).join('');
     chipsEl.innerHTML=html;
     document.getElementById('extra').innerHTML='<button data-g="all" aria-pressed="'+!anyFilter()+'">alle</button><button data-g="foto" aria-pressed="'+st.foto+'">mit Foto<span class="n">'+D.n_foto+'</span></button>';
+    var act=[]; GROUPS.forEach(function(g){if(st.f[g[0]])act.push('<button data-g="'+g[0]+'" data-v="'+esc(st.f[g[0]])+'" title="'+g[1]+' entfernen">'+((g[0]==='aufwand'||g[0]==='kosten')?g[1]+': ':'')+esc(st.f[g[0]])+'</button>');});
+    if(st.foto)act.push('<button data-g="foto">mit Foto</button>');
+    document.getElementById('active').innerHTML=act.join('');
+    document.getElementById('togn').textContent=act.length?act.length:'';
     sortBtns.forEach(function(b){b.classList.toggle('on',b.dataset.s===st.sort);});
   }
   function renderGrid(keep){
@@ -247,9 +270,11 @@ footer div{max-width:1500px;margin:0 auto;padding:22px 22px 40px;color:var(--mut
   function renderList(params){
     view='list'; setNav('home'); filters.hidden=false; document.title='montagsplausch – die Rezeptsammlung';
     st.q=params.get('q')||''; st.f={}; GROUPS.forEach(function(g){st.f[g[0]]=params.get(g[0])||'';}); st.foto=params.get('foto')==='1'; st.sort=params.get('s')||'wertung'; st.limit=48; q.value=st.q;
-    app.innerHTML='<section class="lead"><h1>Zehn Jahre Montagabend, '+R.length+' Rezepte.</h1><p>'+D.n_abende+' Abende in Basel, '+D.n_foto+' Gerichte fotografiert, bewertet mit einem bis sechs Äpfeln. Die Texte stehen unverändert da, wie damals notiert.</p></section><ul class="grid" id="grid"></ul><div id="tail"></div>';
+    app.innerHTML=(D.alteDaten?'<p class="empty" style="padding:20px 0 0">Hinweis: assets/rezepte.json ist noch die alte Fassung ohne Merkmale – Filter fehlen, bis die neue Datei hochgeladen ist.</p>':'')+'<section class="lead"><h1>Zehn Jahre Montagabend, '+R.length+' Rezepte.</h1><p>'+D.n_abende+' Abende in Basel, '+D.n_foto+' Gerichte fotografiert, bewertet mit einem bis sechs Äpfeln. Die Texte stehen unverändert da, wie damals notiert.</p></section><ul class="grid" id="grid"></ul><div id="tail"></div>';
     renderGrid(false);
   }
+  var panelOpen=false, tog=document.getElementById('tog'), panel=document.getElementById('panel');
+  tog.addEventListener('click',function(){panelOpen=!panelOpen;panel.hidden=!panelOpen;tog.setAttribute('aria-expanded',panelOpen);});
   filters.addEventListener('click',function(e){
     var b=e.target.closest('button[data-g]'); if(!b) return; var g=b.dataset.g; st.limit=48;
     if(g==='all'){st.f={};st.foto=false;}
@@ -348,12 +373,17 @@ footer div{max-width:1500px;margin:0 auto;padding:22px 22px 40px;color:var(--mut
   }
   window.addEventListener('hashchange',route);
 
-  fetch('assets/rezepte.json').then(function(x){return x.json();}).then(function(d){
+  fetch('assets/rezepte.json?v=3',{cache:'no-cache'}).then(function(x){return x.json();}).then(function(d){
     D=d; R=d.rezepte; EV=d.abende;
     R.forEach(function(r){var e=EV[r.abend]; BY[r.slug]=r; r._jahr=e.datum.slice(0,4); r._nr=e.nr; r.tags=r.tags||{};
       var tg=[]; for(var k in r.tags) tg=tg.concat(r.tags[k]);
       r._s=norm(r.titel+' '+e.titel+' '+r.text+' '+(e.anwesend||'')+' '+e.getraenke.join(' ')+' '+tg.join(' '));});
     D.n_foto=R.filter(function(r){return r.bild;}).length;
+    if(!D.tagwerte){ // ältere rezepte.json ohne Merkmale: Gruppen aus den Rezepten ableiten (leer, wenn keine Tags)
+      D.tagwerte={}; GROUPS.forEach(function(g){var c={}; R.forEach(function(r){(r.tags[g[0]]||[]).forEach(function(v){c[v]=(c[v]||0)+1;});});
+        D.tagwerte[g[0]]=Object.keys(c).sort(function(a,b){return c[b]-c[a];}).map(function(k){return {name:k,n:c[k]};});});
+      D.alteDaten=!R.some(function(r){return Object.keys(r.tags).length;});
+    }
     route();
   }).catch(function(err){ app.innerHTML='<p class="empty">Die Rezepte konnten nicht geladen werden ('+esc(err.message)+').</p>'; });
 })();
