@@ -100,12 +100,19 @@ h1,h2{margin:0;font-weight:700;letter-spacing:-.035em;line-height:1}
 .lead p{margin:0;flex:1 1 280px;max-width:42ch;color:var(--mute);font-size:15.5px;line-height:1.6;text-wrap:pretty}
 .grid{margin:0 0 30px;padding:0;list-style:none;display:grid;grid-template-columns:repeat(auto-fill,minmax(212px,1fr));gap:10px}
 @media(max-width:560px){.grid{grid-template-columns:repeat(2,1fr);gap:8px}}
-.flip{perspective:1200px;display:block;color:var(--fg)}
+.flip{display:block;color:var(--fg)}
 .flip:hover{text-decoration:none;color:var(--fg)}
-.tile{position:relative;aspect-ratio:1/1;border-radius:4px;overflow:hidden;background:var(--bg-2);display:block;color:var(--fg);transform:rotateY(0deg);backface-visibility:hidden;-webkit-backface-visibility:hidden}
-.flip .in{display:block;position:relative;aspect-ratio:1/1;transition:transform .55s cubic-bezier(.2,.7,.2,1);transform-style:preserve-3d}
-@media(hover:hover){.flip:hover .in{transform:rotateY(180deg)}}
-.flip .bk{position:absolute;inset:0;transform-style:preserve-3d;border-radius:4px;background:var(--bg-3);border:1px solid var(--line);transform:rotateY(180deg);backface-visibility:hidden;-webkit-backface-visibility:hidden;padding:14px 15px;display:flex;flex-direction:column;gap:8px;overflow:hidden}
+.tile{position:relative;aspect-ratio:1/1;border-radius:4px;overflow:hidden;background:var(--bg-2);display:block;color:var(--fg)}
+.flip .in{display:block;position:relative;aspect-ratio:1/1}
+.flip .bk{display:none}
+/* Umdrehen nur auf Geräten mit echtem Hover (Maus). Touch bleibt bei der Bildkachel. */
+@media(hover:hover) and (pointer:fine){
+  .flip{perspective:1200px}
+  .tile{transform:rotateY(0deg);backface-visibility:hidden;-webkit-backface-visibility:hidden}
+  .flip .in{transition:transform .55s cubic-bezier(.2,.7,.2,1);transform-style:preserve-3d}
+  .flip:hover .in{transform:rotateY(180deg)}
+  .flip .bk{position:absolute;inset:0;transform-style:preserve-3d;border-radius:4px;background:var(--bg-3);border:1px solid var(--line);transform:rotateY(180deg);backface-visibility:hidden;-webkit-backface-visibility:hidden;padding:14px 15px;display:flex;flex-direction:column;gap:8px;overflow:hidden}
+}
 .flip .bk .bt{font-size:14.5px;font-weight:600;line-height:1.2;letter-spacing:-.01em}
 .flip .bk .bx{font-size:12.5px;line-height:1.45;color:var(--fg-3);flex:1;overflow:hidden;display:-webkit-box;-webkit-line-clamp:7;-webkit-box-orient:vertical}
 .flip .bk .bm{font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;color:var(--mute-2);display:flex;justify-content:space-between;gap:8px}
